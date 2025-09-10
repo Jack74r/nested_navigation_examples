@@ -47,11 +47,13 @@ class NestedRouter extends RootStackRouter {
             // Section A avec navigation imbriquée
             AutoRoute(
               path: 'a', // URL: /a
-              page: SectionAWrapperRoute.page, // Wrapper qui gère la navigation interne
+              page: SectionAWrapperRoute
+                  .page, // Wrapper qui gère la navigation interne
               children: [
                 // Page principale de la section A
                 AutoRoute(
-                  path: '', // URL: /a (chemin vide = route par défaut de la section)
+                  path:
+                      '', // URL: /a (chemin vide = route par défaut de la section)
                   page: SectionARoute.page,
                   initial: true, // Route par défaut quand on arrive sur /a
                 ),
@@ -104,7 +106,7 @@ class HostScreen extends StatelessWidget {
       builder: (context, child) {
         // Récupère l'instance du routeur d'onglets pour contrôler la navigation
         final tabsRouter = AutoTabsRouter.of(context);
-        
+
         // LayoutBuilder permet d'adapter l'UI selon la taille de l'écran
         return LayoutBuilder(
           builder: (context, constraints) {
@@ -112,7 +114,8 @@ class HostScreen extends StatelessWidget {
             if (constraints.maxWidth < 450) {
               return ScaffoldWithNavigationBar(
                 body: child, // Contenu de l'onglet actuel
-                selectedIndex: tabsRouter.activeIndex, // Index de l'onglet actif
+                selectedIndex:
+                    tabsRouter.activeIndex, // Index de l'onglet actif
                 onDestinationSelected: (index) {
                   tabsRouter.setActiveIndex(
                     index,
@@ -266,20 +269,19 @@ class DetailsBScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DetailsScreen(
       label: "B",
-      // Callback personnalisé pour démontrer la navigation complexe
+      // Callback personnalisé pour démontrer la navigation complexe type-safe
       onResetPressed: () {
-        // Exemple de navigation complexe : reset + changement d'onglet
+        // Navigation type-safe vers l'onglet A avec reset de la route B
         
-        // 1. Récupère le routeur d'onglets depuis le contexte
-        final tabsRouter = AutoTabsRouter.of(context);
-
-        // 2. Revient à la page racine de l'onglet actuel (Section B)
-        //    popUntilRoot() supprime toutes les pages de la pile jusqu'à la racine
+        // Reset la pile de navigation de l'onglet B actuel
         context.router.popUntilRoot();
-
-        // 3. Change vers l'onglet A (index 0)
-        //    Cela démontre comment naviguer entre onglets programmatiquement
-        tabsRouter.setActiveIndex(0);
+        
+        // Navigation vers le wrapper de la Section A (accessible depuis le root)
+        // SectionAWrapperRoute contient SectionARoute comme route par défaut
+        context.router.root.navigate(SectionAWrapperRoute());
+        
+        // Alternative: Navigation par chemin (moins type-safe mais fonctionne)
+        // context.router.root.pushPath('/a');
       },
     );
   }
