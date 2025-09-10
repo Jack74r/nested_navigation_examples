@@ -1,31 +1,30 @@
-// AutoRoute - Package de navigation avancé pour Flutter
+// AutoRoute - Advanced navigation package for Flutter
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
-// Fichier généré automatiquement par AutoRoute contenant les définitions de routes
+// Auto-generated file by AutoRoute containing route definitions
 import 'package:nested_navigation_gorouter_example/autoroute/main_autoroute.gr.dart';
 import 'package:nested_navigation_gorouter_example/shared/widgets/details_screen.dart';
 import 'package:nested_navigation_gorouter_example/shared/widgets/scaffold_with_nested_navigation.dart';
 
 void main() {
-  // Supprime le '#' des URLs sur le web pour des URLs plus propres
-  // Au lieu de: myapp.com/#/section/a → myapp.com/section/a
+  // Remove '#' from URLs on web for cleaner URLs
   usePathUrlStrategy();
   runApp(NestedNavigationApp());
 }
 
-/// Widget racine de l'application utilisant AutoRoute pour la navigation
+/// Root application widget using AutoRoute for navigation
 class NestedNavigationApp extends StatelessWidget {
   NestedNavigationApp({super.key});
 
-  // Instance du routeur personnalisé qui gère toute la navigation de l'app
+  // Custom router instance that handles all app navigation
   final nestedRouter = NestedRouter();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      // Configuration du routeur AutoRoute - remplace le système de navigation par défaut
+      // AutoRoute router configuration
       routerConfig: nestedRouter.config(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.indigo),
@@ -33,51 +32,49 @@ class NestedNavigationApp extends StatelessWidget {
   }
 }
 
-/// Configuration du routeur AutoRoute avec annotation pour la génération de code
+/// AutoRoute router configuration with code generation annotation
 @AutoRouterConfig()
 class NestedRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        // Route racine de l'application (/)
+        // Root application route (/)
         AutoRoute(
           path: '/',
-          initial: true, // Cette route est la route par défaut au démarrage
-          page: HostRoute.page, // Page qui contient la navigation par onglets
+          initial: true, // Default route at startup
+          page: HostRoute.page, // Page containing tab navigation
           children: [
-            // Section A avec navigation imbriquée
+            // Section A with nested navigation
             AutoRoute(
-              path: 'a', // URL: /a
-              page: SectionAWrapperRoute
-                  .page, // Wrapper qui gère la navigation interne
+              path: 'a',
+              page: SectionAWrapperRoute.page,
               children: [
-                // Page principale de la section A
+                // Main page for section A
                 AutoRoute(
-                  path:
-                      '', // URL: /a (chemin vide = route par défaut de la section)
+                  path: '', // Default route for section A
                   page: SectionARoute.page,
-                  initial: true, // Route par défaut quand on arrive sur /a
+                  initial: true,
                 ),
-                // Page de détails de la section A
+                // Details page for section A
                 AutoRoute(
-                  path: 'details', // URL: /a/details
+                  path: 'details',
                   page: DetailsARoute.page,
                 ),
               ],
             ),
-            // Section B avec navigation imbriquée (même structure que A)
+            // Section B with nested navigation
             AutoRoute(
-              path: 'b', // URL: /b
+              path: 'b',
               page: SectionBWrapperRoute.page,
               children: [
-                // Page principale de la section B
+                // Main page for section B
                 AutoRoute(
-                  path: '', // URL: /b
+                  path: '',
                   page: SectionBRoute.page,
                   initial: true,
                 ),
-                // Page de détails de la section B
+                // Details page for section B
                 AutoRoute(
-                  path: 'details', // URL: /b/details
+                  path: 'details',
                   page: DetailsBRoute.page,
                 ),
               ],
@@ -87,46 +84,44 @@ class NestedRouter extends RootStackRouter {
       ];
 }
 
-/// Écran principal qui gère la navigation par onglets
+/// Main screen that handles tab navigation
 @RoutePage()
 class HostScreen extends StatelessWidget {
   const HostScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // AutoTabsRouter gère automatiquement la navigation entre onglets
-    // Il maintient l'état de chaque onglet séparément (navigation imbriquée)
+    // AutoTabsRouter automatically handles navigation between tabs
+    // It maintains each tab's state separately (nested navigation)
     return AutoTabsRouter(
-      // Définit les routes des onglets disponibles
+      // Define available tab routes
       routes: [
-        SectionAWrapperRoute(), // Onglet A
-        SectionBWrapperRoute(), // Onglet B
+        SectionAWrapperRoute(),
+        SectionBWrapperRoute(),
       ],
-      // Builder appelé à chaque changement d'onglet
+      // Builder called on each tab change
       builder: (context, child) {
-        // Récupère l'instance du routeur d'onglets pour contrôler la navigation
+        // Get tabs router instance to control navigation
         final tabsRouter = AutoTabsRouter.of(context);
 
-        // LayoutBuilder permet d'adapter l'UI selon la taille de l'écran
+        // LayoutBuilder adapts UI based on screen size
         return LayoutBuilder(
           builder: (context, constraints) {
-            // Sur mobile (largeur < 450px) : barre de navigation en bas
+            // Mobile: bottom navigation bar
             if (constraints.maxWidth < 450) {
               return ScaffoldWithNavigationBar(
-                body: child, // Contenu de l'onglet actuel
-                selectedIndex:
-                    tabsRouter.activeIndex, // Index de l'onglet actif
+                body: child,
+                selectedIndex: tabsRouter.activeIndex,
                 onDestinationSelected: (index) {
                   tabsRouter.setActiveIndex(
                     index,
-                    // notify: false si on tape sur l'onglet déjà actif
-                    // Cela permet de revenir à la page racine de l'onglet
+                    // notify: false when tapping already active tab to go to root
                     notify: index != tabsRouter.activeIndex,
                   );
                 },
               );
             } else {
-              // Sur desktop/tablette : rail de navigation à gauche
+              // Desktop/tablet: left navigation rail
               return ScaffoldWithNavigationRail(
                 body: child,
                 selectedIndex: tabsRouter.activeIndex,
@@ -145,36 +140,31 @@ class HostScreen extends StatelessWidget {
   }
 }
 
-/// Wrapper pour la Section A - Gère la navigation imbriquée à l'intérieur de l'onglet A
-/// Ce wrapper est essentiel pour permettre la navigation entre SectionAScreen et DetailsAScreen
-/// tout en maintenant l'état de l'onglet A séparément de l'onglet B
+/// Wrapper for Section A - Handles nested navigation within tab A
 @RoutePage()
 class SectionAWrapperScreen extends StatelessWidget {
   const SectionAWrapperScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // AutoRouter() crée un nouveau contexte de navigation pour les routes enfants
-    // Il affiche automatiquement la route enfant appropriée selon l'URL
+    // AutoRouter() creates new navigation context for child routes
     return const AutoRouter();
   }
 }
 
-/// Wrapper pour la Section B - Même principe que SectionAWrapperScreen
-/// Permet la navigation imbriquée indépendante dans l'onglet B
+/// Wrapper for Section B - Handles nested navigation within tab B
 @RoutePage()
 class SectionBWrapperScreen extends StatelessWidget {
   const SectionBWrapperScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Chaque wrapper maintient sa propre pile de navigation
-    // Quand on navigue dans l'onglet B, l'onglet A garde son état
+    // Each wrapper maintains its own navigation stack
     return const AutoRouter();
   }
 }
 
-/// Écran principal de la Section A - Page racine de l'onglet A
+/// Main screen for Section A
 @RoutePage()
 class SectionAScreen extends StatelessWidget {
   const SectionAScreen({super.key});
@@ -184,7 +174,7 @@ class SectionAScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Section A"),
-        // Désactive le bouton retour automatique car c'est la page racine
+        // Disable automatic back button as this is the root page
         automaticallyImplyLeading: false,
       ),
       body: Center(
@@ -197,9 +187,7 @@ class SectionAScreen extends StatelessWidget {
             ),
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
-              // Navigation vers la page de détails de la section A
-              // context.pushRoute() ajoute une nouvelle page à la pile de navigation
-              // L'URL devient: /a/details
+              // Navigate to section A details
               onPressed: () => context.pushRoute(DetailsARoute()),
               child: const Text("Show Details"),
             ),
@@ -210,7 +198,7 @@ class SectionAScreen extends StatelessWidget {
   }
 }
 
-/// Écran principal de la Section B - Page racine de l'onglet B
+/// Main screen for Section B
 @RoutePage()
 class SectionBScreen extends StatelessWidget {
   const SectionBScreen({super.key});
@@ -220,7 +208,7 @@ class SectionBScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Section B"),
-        // Pas de bouton retour car c'est la page racine de l'onglet B
+        // No back button as this is the root page
         automaticallyImplyLeading: false,
       ),
       body: Center(
@@ -233,8 +221,7 @@ class SectionBScreen extends StatelessWidget {
             ),
             const Padding(padding: EdgeInsets.all(4)),
             TextButton(
-              // Navigation vers les détails de la section B
-              // URL résultante: /b/details
+              // Navigate to section B details
               onPressed: () => context.pushRoute(DetailsBRoute()),
               child: const Text("Show Details"),
             ),
@@ -245,22 +232,21 @@ class SectionBScreen extends StatelessWidget {
   }
 }
 
-/// Écran de détails pour la Section A
+/// Details screen for Section A
 @RoutePage()
 class DetailsAScreen extends StatelessWidget {
   const DetailsAScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Utilise le widget DetailsScreen partagé avec le label "A"
-    // Ce widget contient la logique commune d'affichage des détails
+    // Uses shared DetailsScreen widget
     return DetailsScreen(
       label: "A",
     );
   }
 }
 
-/// Écran de détails pour la Section B avec fonctionnalité de reset
+/// Details screen for Section B with reset functionality
 @RoutePage()
 class DetailsBScreen extends StatelessWidget {
   const DetailsBScreen({super.key});
@@ -269,19 +255,14 @@ class DetailsBScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return DetailsScreen(
       label: "B",
-      // Callback personnalisé pour démontrer la navigation complexe type-safe
+      // Custom callback demonstrating complex type-safe navigation
       onResetPressed: () {
-        // Navigation type-safe vers l'onglet A avec reset de la route B
-        
-        // Reset la pile de navigation de l'onglet B actuel
+        // Type-safe navigation to tab A with route B reset
+        // Reset current tab B navigation stack
         context.router.popUntilRoot();
-        
-        // Navigation vers le wrapper de la Section A (accessible depuis le root)
-        // SectionAWrapperRoute contient SectionARoute comme route par défaut
+
+        // Navigate to Section A wrapper from root
         context.router.root.navigate(SectionAWrapperRoute());
-        
-        // Alternative: Navigation par chemin (moins type-safe mais fonctionne)
-        // context.router.root.pushPath('/a');
       },
     );
   }
