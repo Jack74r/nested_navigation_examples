@@ -1,16 +1,16 @@
-# Stateful Nested Navigation examples: GoRouter vs Beamer
+# andra_gorouter
 
-This is an example app showing how to implement bottom navigation with nested routes using [GoRouter](https://pub.dev/packages/go_router) and [Beamer](https://pub.dev/packages/beamer):
+A new Flutter project.
 
-![Nested Bottom Navigation Preview](/.github/images/nested-navigation-with-state.gif)
+## Getting Started
 
-It is based on this article on my website:
+This project is a starting point for a Flutter application.
 
-- [Flutter Bottom Navigation Bar with Stateful Nested Routes using GoRouter](https://codewithandrea.com/articles/flutter-bottom-navigation-bar-nested-routes-gorouter-beamer)
+A few resources to get you started if this is your first Flutter project:
 
-To see how the example app is implemented using the two packages, check these folders:
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-- [GoRouter example](examples/gorouter)
-- [Beamer example](examples/beamer)
-
-### [LICENSE: MIT](LICENSE.md)
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
