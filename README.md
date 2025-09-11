@@ -53,78 +53,6 @@ sequenceDiagram
     Note over SectionA: Section B state is reset
 ```
 
-## 📱 Navigation Implementations
-
-### 1. GoRouter Implementation
-
-**Strengths:**
-- ✅ Declarative route configuration
-- ✅ Built-in support for nested navigation with `StatefulShellRoute`
-- ✅ Good integration with Flutter's navigation system
-- ✅ Type-safe navigation
-
-**Challenges:**
-- ⚠️ Complex cross-tab navigation requires workarounds
-- ⚠️ Need `addPostFrameCallback` for proper state reset
-- ⚠️ `pop()` and `go()` interactions can be tricky
-
-**Key Implementation Details:**
-```dart
-// Complex navigation requiring post-frame callback
-onResetPressed: () {
-  final navigationShell = StatefulNavigationShell.of(context);
-  navigationShell.goBranch(1, initialLocation: true);
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    navigationShell.goBranch(0);
-  });
-}
-```
-
-### 2. Beamer Implementation
-
-**Strengths:**
-- ✅ Location-based routing concept
-- ✅ Clean separation of navigation logic
-- ✅ Good support for nested navigation
-- ✅ Flexible route building
-
-**Challenges:**
-- ⚠️ Steeper learning curve
-- ⚠️ More boilerplate code required
-- ⚠️ Complex state management for cross-tab navigation
-
-**Key Implementation Details:**
-```dart
-// Clean cross-tab navigation
-void goHomeAResetB() {
-  _routerDelegates[1].beamToNamed('/b'); // Reset B
-  setState(() => _currentIndex = 0);      // Switch to A
-  _routerDelegates[0].update(rebuild: false);
-}
-```
-
-### 3. AutoRoute Implementation
-
-**Strengths:**
-- ✅ Code generation for type-safe navigation
-- ✅ Excellent TypeScript-like route definitions
-- ✅ Clean and intuitive API
-- ✅ Best-in-class cross-tab navigation support
-
-**Challenges:**
-- ⚠️ Requires code generation step
-- ⚠️ Build runner dependency
-- ⚠️ Learning curve for annotations
-
-**Key Implementation Details:**
-```dart
-// Elegant cross-tab navigation
-onResetPressed: () {
-  context.router.popUntilRoot();                    // Reset current stack
-  context.router.root.navigate(SectionAWrapperRoute()); // Navigate to A
-}
-```
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -134,10 +62,6 @@ onResetPressed: () {
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone <repository-url>
-cd nested_navigation_examples
-```
 
 2. Install dependencies:
 ```bash
