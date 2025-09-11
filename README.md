@@ -53,6 +53,34 @@ sequenceDiagram
     Note over SectionA: Section B state is reset
 ```
 
+## 📝 Real-World Use Case: Form Submission
+
+**Scenario**: Section B Details is a form. The navigation behavior differs based on user action:
+
+### Normal Tab Switching (State Preserved)
+- User fills form in B Details → switches to A → returns to B Details
+- **Form data persists** (IndexedStack preserves state)
+
+### Form Submission (State Reset)
+After successful form submission:
+1. **Clear form data** 
+2. **Reset Section B** to prevent back navigation to completed form
+3. **Navigate to Section A** for fresh user session
+
+Common in e-commerce, surveys, and multi-step workflows where you need clean state after form completion.
+
+## 📊 Implementation Comparison
+
+| Feature | GoRouter | Beamer | AutoRoute |
+|---------|----------|---------|-----------|
+| **Cross-tab Navigation** | ⚠️ Flash screen issue  | ✅  | ✅  |
+
+
+### Known Issues
+
+- **GoRouter**: Flash screen occurs during cross-tab navigation with state reset. Workaround: wrap navigation calls in `WidgetsBinding.instance.addPostFrameCallback()`
+
+
 ## 🚀 Getting Started
 
 ### Prerequisites
